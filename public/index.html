@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand Positioning Audit</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f0f0f0;
+      --gray-200: #e0e0e0;
+      --gray-400: #9a9a9a;
+      --gray-600: #555555;
+      --gray-800: #222222;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    body {
+      font-family: var(--font);
+      background: var(--gray-50);
+      color: var(--black);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    .progress-wrap {
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--black);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--gray-400);
+      text-align: right;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-intro {
+      background: var(--black);
+      color: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #ccc;
+    }
+
+    .card-intro strong {
+      color: var(--white);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .q-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .q-text {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .q-hint {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    .multi-hint {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--black);
+      background: var(--gray-50);
+      line-height: 1.5;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      background: var(--white);
+    }
+
+    input[type=text], input[type=url], select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--black);
+      background: var(--gray-50);
+      transition: border-color 0.2s;
+    }
+
+    input[type=text]:focus, input[type=url]:focus, select:focus {
+      outline: none;
+      border-color: var(--black);
+      background: var(--white);
+    }
+
+    .url-field { margin-bottom: 12px; }
+    .url-field:last-child { margin-bottom: 0; }
+
+    .url-label {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 10px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--gray-400);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--black);
+      background: var(--gray-50);
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+
+    .option:hover { border-color: var(--gray-400); background: var(--white); }
+
+    .option.selected {
+      border-color: var(--black);
+      background: var(--white);
+    }
+
+    .option input { accent-color: var(--black); flex-shrink: 0; }
+
+    .other-field {
+      margin-top: 10px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 11px 22px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--black);
+      transition: background 0.15s, border-color 0.15s;
+      font-family: var(--font);
+    }
+
+    .btn:hover { background: var(--gray-100); }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .btn-primary:hover { opacity: 0.85; background: var(--black); }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--gray-200);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.25rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 15px;
+      color: var(--gray-600);
+    }
+
+    .loading-sub {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 6px;
+    }
+
+    .report-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+    }
+
+    .report-header {
+      border-bottom: 1px solid var(--gray-100);
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .report-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .report-date {
+      font-size: 13px;
+      color: var(--gray-400);
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 1.75rem;
+    }
+
+    .score-box {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .score-num {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .section {
+      margin-bottom: 1.75rem;
+    }
+
+    .section:last-child { margin-bottom: 0; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .section p {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.7;
+    }
+
+    .gap-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .gap-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .gap-n {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gray-100);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .gap-text {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    .action-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-item {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.6;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .action-item::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--gray-400);
+    }
+
+    .positioning-stmt {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.7;
+      font-style: italic;
+      border-left: 3px solid var(--gray-200);
+      padding-left: 14px;
+    }
+
+    .final-msg {
+      background: var(--black);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.7;
+    }
+
+    .platforms-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .platform-tag {
+      font-size: 12px;
+      padding: 3px 10px;
+      background: var(--gray-100);
+      border-radius: 20px;
+      color: var(--gray-600);
+    }
+
+    .error-box {
+      background: #fff5f5;
+      border: 1px solid #fca5a5;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #dc2626;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .restart-wrap {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1.5rem 1rem 3rem; }
+      .header h1 { font-size: 24px; }
+      .scores { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .score-num { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>Brand Positioning Audit</h1>
+      <p>Answer a few questions and get your personalized positioning report instantly.</p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
+      <div class="progress-label" id="progress-label">Step 1 of 7</div>
+    </div>
+
+    <!-- STEP 0: Digital Presence -->
+    <div id="step-0" class="step active">
+      <div class="card-intro">
+        <strong>Show us what you've got online.</strong>
+        This helps us give you a real diagnosis — not a generic one. Leave blank anything that doesn't apply.
+      </div>
+      <div class="card">
+        <div class="q-text">Your digital presence</div>
+        <div style="margin-top:1rem;">
+          <div class="url-field">
+            <div class="url-label">Website <span class="badge">optional</span></div>
+            <input type="url" id="url-website" placeholder="https://yourwebsite.com">
+          </div>
+          <div class="url-field">
+            <div class="url-label">LinkedIn <span class="badge">optional</span></div>
+            <input type="url" id="url-linkedin" placeholder="https://linkedin.com/in/yourname">
+          </div>
+          <div class="url-field">
+            <div class="url-label">Instagram <span class="badge">optional</span></div>
+            <input type="text" id="url-instagram" placeholder="@yourhandle">
+          </div>
+          <div class="url-field">
+            <div class="url-label">Facebook <span class="badge">optional</span></div>
+            <input type="url" id="url-facebook" placeholder="https://facebook.com/yourpage">
+          </div>
+          <div class="url-field">
+            <div class="url-label">YouTube <span class="badge">optional</span></div>
+            <input type="url" id="url-youtube" placeholder="https://youtube.com/@yourchannel">
+          </div>
+          <div class="url-field">
+            <div class="url-label">Other platform <span class="badge">optional</span></div>
+            <input type="text" id="url-other" placeholder="TikTok, podcast, Substack...">
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <span></span>
+        <button class="btn btn-primary" onclick="goTo(1)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: Q1 + Q1b -->
+    <div id="step-1" class="step">
+      <div class="card">
+        <div class="q-num">Question 1</div>
+        <div class="q-text">What do you do and who do you do it for?</div>
+        <div class="q-hint">Ex: "I help corporate executives transition into entrepreneurship"</div>
+        <textarea id="q1" placeholder="Describe your work and your ideal client..."></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 1b</div>
+        <div class="q-text">How long have you been in business?</div>
+        <div class="options" style="margin-top:12px;">
+          <label class="option"><input type="radio" name="q1b" value="Less than 1 year"> Less than 1 year</label>
+          <label class="option"><input type="radio" name="q1b" value="1–3 years"> 1–3 years</label>
+          <label class="option"><input type="radio" name="q1b" value="3–5 years"> 3–5 years</label>
+          <label class="option"><input type="radio" name="q1b" value="5–10 years"> 5–10 years</label>
+          <label class="option"><input type="radio" name="q1b" value="10+ years"> 10+ years</label>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(0)">Back</button>
+        <button class="btn btn-primary" onclick="goTo(2)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Q2 + Q3 -->
+    <div id="step-2" class="step">
+      <div class="card">
+        <div class="q-num">Question 2</div>
+        <div class="q-text">How would your best client describe you in one sentence?</div>
+        <textarea id="q2" placeholder="What would they say about you..." style="margin-top:12px;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 3</div>
+        <div class="q-text">When someone Googles you or visits your website, what do they see?</div>
+        <div class="options" style="margin-top:12px;">
+          <label class="option"><input type="radio" name="q3" value="Nothing — I'm basically invisible online"> Nothing — I'm basically invisible online</label>
+          <label class="option"><input type="radio" name="q3" value="Something generic that looks like everyone else"> Something generic that looks like everyone else</label>
+          <label class="option"><input type="radio" name="q3" value="Something that represents me but needs work"> Something that represents me but needs work</label>
+          <label class="option"><input type="radio" name="q3" value="A strong, clear, premium presence"> A strong, clear, premium presence</label>
+          <label class="option"><input type="radio" name="q3" value="other-q3"> Other:</label>
+        </div>
+        <div class="other-field" id="q3-other-wrap" style="display:none;">
+          <input type="text" id="q3-other" placeholder="Describe what they see...">
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(1)">Back</button>
+        <button class="btn btn-primary" onclick="goTo(3)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Q4 + Q5 -->
+    <div id="step-3" class="step">
+      <div class="card">
+        <div class="q-num">Question 4</div>
+        <div class="q-text">What's your current price point for your main offer?</div>
+        <div class="q-hint">A range is fine</div>
+        <textarea id="q4" placeholder="Ex: $500–$2,000 per project, $5,000/month retainer..." style="min-height:70px;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 5</div>
+        <div class="q-text">What do you think is stopping people from buying from you?</div>
+        <div class="options" style="margin-top:12px;">
+          <label class="option"><input type="radio" name="q5" value="They don't find me"> They don't find me</label>
+          <label class="option"><input type="radio" name="q5" value="They find me but don't understand what I do"> They find me but don't understand what I do</label>
+          <label class="option"><input type="radio" name="q5" value="They understand but don't see the value"> They understand but don't see the value</label>
+          <label class="option"><input type="radio" name="q5" value="They see the value but think it's too expensive"> They see the value but think it's too expensive</label>
+          <label class="option"><input type="radio" name="q5" value="other-q5"> Other:</label>
+        </div>
+        <div class="other-field" id="q5-other-wrap" style="display:none;">
+          <input type="text" id="q5-other" placeholder="What's stopping them...">
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(2)">Back</button>
+        <button class="btn btn-primary" onclick="goTo(4)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Q6 + Q7 -->
+    <div id="step-4" class="step">
+      <div class="card">
+        <div class="q-num">Question 6</div>
+        <div class="q-text">Who are your 2–3 biggest competitors? What makes you different?</div>
+        <textarea id="q6" placeholder="Name them and explain your key differentiators..." style="margin-top:12px;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 7</div>
+        <div class="q-text">What result do you create for your clients that nobody else does?</div>
+        <textarea id="q7" placeholder="Your unique outcome or transformation..." style="margin-top:12px;"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(3)">Back</button>
+        <button class="btn btn-primary" onclick="goTo(5)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Q8 + Q9 -->
+    <div id="step-5" class="step">
+      <div class="card">
+        <div class="q-num">Question 8</div>
+        <div class="q-text">How do most of your clients find you today?</div>
+        <div class="multi-hint" style="margin-top:8px;">Select all that apply</div>
+        <div class="options">
+          <label class="option"><input type="checkbox" name="q8" value="Referrals"> Referrals</label>
+          <label class="option"><input type="checkbox" name="q8" value="Instagram"> Instagram</label>
+          <label class="option"><input type="checkbox" name="q8" value="LinkedIn"> LinkedIn</label>
+          <label class="option"><input type="checkbox" name="q8" value="Facebook"> Facebook</label>
+          <label class="option"><input type="checkbox" name="q8" value="Speaking/events"> Speaking / events</label>
+          <label class="option"><input type="checkbox" name="q8" value="Cold outreach"> Cold outreach</label>
+          <label class="option"><input type="checkbox" name="q8" value="Google/SEO"> Google / SEO</label>
+          <label class="option"><input type="checkbox" name="q8" value="I'm still figuring this out"> I'm still figuring this out</label>
+        </div>
+        <div class="other-field">
+          <input type="text" id="q8-other" placeholder="Anything else? Add it here...">
+        </div>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 9</div>
+        <div class="q-text">If your brand was a person walking into a room, how would people describe them?</div>
+        <div class="q-hint">Ex: "confident but approachable", "the smartest person there but you'd never know it"</div>
+        <textarea id="q9" placeholder="Describe the personality and presence of your brand..." style="min-height:70px;"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(4)">Back</button>
+        <button class="btn btn-primary" onclick="goTo(6)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 6: Q10 + Q11 + Generate -->
+    <div id="step-6" class="step">
+      <div class="card">
+        <div class="q-num">Question 10</div>
+        <div class="q-text">What's the ONE thing you wish people understood about you that they currently don't?</div>
+        <textarea id="q10" placeholder="The thing that if people knew, they'd buy immediately..." style="margin-top:12px;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 11</div>
+        <div class="q-text">Where are you based?</div>
+        <select id="q11" style="margin-top:12px;">
+          <option value="">Select your location...</option>
+          <option value="United States — Northeast">United States — Northeast</option>
+          <option value="United States — Southeast">United States — Southeast</option>
+          <option value="United States — Midwest">United States — Midwest</option>
+          <option value="United States — West Coast">United States — West Coast</option>
+          <option value="United States — Other">United States — Other</option>
+          <option value="Canada">Canada</option>
+          <option value="Latin America">Latin America</option>
+          <option value="Europe">Europe</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="error-box" id="error-msg"></div>
+      <div class="nav">
+        <button class="btn" onclick="goTo(5)">Back</button>
+        <button class="btn btn-primary" id="generate-btn" onclick="generateReport()">Generate My Report</button>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="step-loading" class="step">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">Analyzing your brand positioning...</div>
+        <div class="loading-sub">This takes about 15 seconds</div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div id="step-report" class="step">
+      <div class="report-card" id="report-content"></div>
+      <div class="restart-wrap">
+        <button class="btn" onclick="restart()">Start over</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const totalSteps = 7;
+
+    function updateProgress(step) {
+      const pct = Math.round(((step + 1) / totalSteps) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = `Step ${step + 1} of ${totalSteps}`;
+    }
+
+    function goTo(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + n).classList.add('active');
+      currentStep = n;
+      updateProgress(n);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', function () {
+        const name = this.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(o => {
+          o.closest('.option').classList.remove('selected');
+        });
+        this.closest('.option').classList.add('selected');
+        const wrapId = name + '-other-wrap';
+        const wrap = document.getElementById(wrapId);
+        if (wrap) wrap.style.display = this.value.startsWith('other-') ? 'block' : 'none';
+      });
+    });
+
+    document.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', function () {
+        this.closest('.option').classList.toggle('selected', this.checked);
+      });
+    });
+
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    function getRadio(name) {
+      const sel = document.querySelector(`input[name="${name}"]:checked`);
+      if (!sel) return '';
+      if (sel.value.startsWith('other-')) {
+        const other = document.getElementById(name + '-other');
+        return other ? other.value.trim() : '';
+      }
+      return sel.value;
+    }
+
+    function getCheckboxes(name) {
+      const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
+      const other = getVal(name + '-other');
+      if (other) checked.push(other);
+      return checked.length > 0 ? checked.join(', ') : 'Not specified';
+    }
+
+    function collectAnswers() {
+      return {
+        website: getVal('url-website'),
+        linkedin: getVal('url-linkedin'),
+        instagram: getVal('url-instagram'),
+        facebook: getVal('url-facebook'),
+        youtube: getVal('url-youtube'),
+        otherPlatform: getVal('url-other'),
+        whatYouDo: getVal('q1'),
+        yearsInBusiness: getRadio('q1b'),
+        bestClientDescription: getVal('q2'),
+        onlinePresence: getRadio('q3'),
+        pricePoint: getVal('q4'),
+        buyingBarrier: getRadio('q5'),
+        competitors: getVal('q6'),
+        uniqueResult: getVal('q7'),
+        clientSource: getCheckboxes('q8'),
+        brandPersonality: getVal('q9'),
+        wishPeopleKnew: getVal('q10'),
+        location: getVal('q11')
+      };
+    }
+
+    async function generateReport() {
+      const answers = collectAnswers();
+      const btn = document.getElementById('generate-btn');
+      const err = document.getElementById('error-msg');
+      err.style.display = 'none';
+      btn.disabled = true;
+
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-loading').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const msgs = [
+        'Analyzing your brand positioning...',
+        'Reviewing your digital presence...',
+        'Identifying your positioning gaps...',
+        'Building your personalized report...'
+      ];
+      let mi = 0;
+      const lt = document.getElementById('loading-text');
+      const interval = setInterval(() => { mi = (mi + 1) % msgs.length; lt.textContent = msgs[mi]; }, 3000);
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(answers)
+        });
+
+        clearInterval(interval);
+
+        if (!res.ok) throw new Error('Server error');
+
+        const report = await res.json();
+        renderReport(report, answers);
+      } catch (e) {
+        clearInterval(interval);
+        btn.disabled = false;
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-6').classList.add('active');
+        err.textContent = 'Something went wrong generating your report. Please try again.';
+        err.style.display = 'block';
+      }
+    }
+
+    function renderReport(r, a) {
+      const platforms = [a.website, a.linkedin, a.instagram, a.facebook, a.youtube, a.otherPlatform].filter(Boolean);
+      const platformsHtml = platforms.length > 0
+        ? `<div class="platforms-row">${platforms.map(p => `<span class="platform-tag">${p}</span>`).join('')}</div>` : '';
+
+      const now = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      document.getElementById('report-content').innerHTML = `
+        <div class="report-header">
+          <div class="report-title">Brand Positioning Report</div>
+          <div class="report-date">Generated on ${now}</div>
+        </div>
+        ${platformsHtml}
+        <div class="scores">
+          <div class="score-box"><div class="score-num">${r.positioningScore}</div><div class="score-label">Positioning</div></div>
+          <div class="score-box"><div class="score-num">${r.visibilityScore}</div><div class="score-label">Visibility</div></div>
+          <div class="score-box"><div class="score-num">${r.authorityScore}</div><div class="score-label">Authority</div></div>
+        </div>
+        <div class="section">
+          <div class="section-title">Where you are now</div>
+          <p>${r.currentStateAnalysis}</p>
+        </div>
+        <div class="section">
+          <div class="section-title">Core positioning gap</div>
+          <p>${r.corePositioningGap}</p>
+        </div>
+        <div class="section">
+          <div class="section-title">Top 3 gaps to close</div>
+          <ul class="gap-list">
+            ${r.topGaps.map((g, i) => `<li class="gap-item"><span class="gap-n">${i + 1}</span><span class="gap-text">${g}</span></li>`).join('')}
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title">Your positioning opportunity</div>
+          <p>${r.uniquePositioningOpportunity}</p>
+        </div>
+        <div class="section">
+          <div class="section-title">Positioning statement (draft)</div>
+          <p class="positioning-stmt">${r.positioningStatement}</p>
+        </div>
+        <div class="section">
+          <div class="section-title">Do these 3 things first</div>
+          <ul class="action-list">
+            ${r.immediateActions.map(ac => `<li class="action-item">${ac}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="section">
+          <div class="final-msg">${r.finalMessage}</div>
+        </div>
+      `;
+
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-report').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function restart() {
+      document.querySelectorAll('textarea').forEach(t => t.value = '');
+      document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(i => {
+        i.checked = false;
+        i.closest('.option').classList.remove('selected');
+      });
+      document.querySelectorAll('input[type=text], input[type=url]').forEach(i => i.value = '');
+      document.querySelectorAll('.other-field').forEach(w => w.style.display = 'none');
+      document.getElementById('q8-other').closest('.other-field').style.display = 'block';
+      document.getElementById('q11').value = '';
+      document.getElementById('generate-btn').disabled = false;
+      goTo(0);
+    }
+
+    updateProgress(0);
+  </script>
+</body>
+</html>

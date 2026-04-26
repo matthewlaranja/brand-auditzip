@@ -1,0 +1,12 @@
+{
+  "name": "brand-positioning-audit",
+  "version": "1.0.0",
+  "description": "Brand Positioning Audit Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
