@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Positioning Gap — Brand Audit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface-2: #1a1a1a;
+      --border: rgba(255,255,255,0.08);
+      --border-active: rgba(255,255,255,0.25);
+      --text: #f0f0f0;
+      --text-muted: #666;
+      --text-dim: #999;
+      --accent: #c8f060;
+      --accent-dim: rgba(200,240,96,0.15);
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans: 'DM Sans', -apple-system, sans-serif;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,240,96,0.06) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(52px, 8vw, 96px);
+      line-height: 1.0;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #080808;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 16px 32px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .hero-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .hero-cta svg { transition: transform 0.2s; }
+    .hero-cta:hover svg { transform: translateX(3px); }
+
+    .hero-note {
+      margin-top: 1.25rem;
+      font-size: 13px;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
+
+    /* FORM AREA */
+    .form-area {
+      display: none;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    .form-area.visible { display: block; }
+
+    /* PROGRESS */
+    .progress-wrap {
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-weight: 300;
+    }
+
+    /* STEP */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.4s ease; }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-dark {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-dark .intro-headline {
+      font-family: var(--serif);
+      font-size: 20px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card-dark .intro-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .q-num {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .q-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .multi-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 300;
+    }
+
+    /* INPUTS */
+    textarea, input[type=text], input[type=url], select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      padding: 12px 14px;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    textarea:focus, input[type=text]:focus, input[type=url]:focus, select:focus {
+      outline: none;
+      border-color: var(--border-active);
+    }
+
+    textarea::placeholder, input::placeholder { color: var(--text-muted); }
+
+    select { cursor: pointer; }
+    select option { background: #111; }
+
+    /* URL FIELDS */
+    .url-field { margin-bottom: 10px; }
+    .url-field:last-child { margin-bottom: 0; }
+
+    .url-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 300;
+    }
+
+    .badge {
+      font-size: 10px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    /* OPTIONS */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-dim);
+      background: var(--bg);
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      user-select: none;
+    }
+
+    .option:hover { border-color: var(--border-active); color: var(--text); }
+
+    .option.selected {
+      border-color: var(--accent);
+      color: var(--text);
+      background: var(--accent-dim);
+    }
+
+    .option input { display: none; }
+
+    .option-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-active);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .option.selected .option-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .option-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #080808;
+      display: none;
+    }
+
+    .option.selected .option-dot::after { display: block; }
+
+    .option-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border-active);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .option.selected .option-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .option-check::after {
+      content: '';
+      width: 8px;
+      height: 5px;
+      border-left: 1.5px solid #080808;
+      border-bottom: 1.5px solid #080808;
+      transform: rotate(-45deg) translateY(-1px);
+      display: none;
+    }
+
+    .option.selected .option-check::after { display: block; }
+
+    .other-field { margin-top: 10px; display: none; }
+
+    /* NAV */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      cursor: pointer;
+      padding: 10px 0;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-back:hover { color: var(--text); }
+
+    .btn-next {
+      background: var(--accent);
+      color: #080808;
+      border: none;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px 28px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-next:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* LOADING */
+    .loading-screen {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .loader {
+      width: 48px;
+      height: 48px;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .loader::before, .loader::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .loader::before {
+      inset: 0;
+      border: 1.5px solid var(--border);
+    }
+
+    .loader::after {
+      inset: 0;
+      border: 1.5px solid transparent;
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .loading-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* REPORT */
+    .report-wrap { animation: fadeUp 0.5s ease; }
+
+    .report-header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .report-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .report-title {
+      font-family: var(--serif);
+      font-size: 36px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .report-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* SCORES */
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 2.5rem;
+    }
+
+    .score-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+
+    .score-num {
+      font-family: var(--serif);
+      font-size: 48px;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .score-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* REPORT SECTIONS */
+    .r-section {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .r-section:last-of-type { border-bottom: none; margin-bottom: 0; }
+
+    .r-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .r-body {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .gap-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+    .gap-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .gap-n {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--accent);
+      width: 24px;
+      flex-shrink: 0;
+      line-height: 1.6;
+    }
+
+    .gap-text {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .action-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .action-item {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      font-weight: 300;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .action-item::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .positioning-stmt {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.7;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+    }
+
+    .final-msg {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      font-family: var(--serif);
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .platforms-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .platform-tag {
+      font-size: 12px;
+      padding: 4px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .restart-wrap {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-restart {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 10px 24px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-restart:hover { border-color: var(--border-active); color: var(--text); }
+
+    .error-box {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #f87171;
+      margin-top: 1rem;
+      display: none;
+      font-weight: 300;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title { font-size: 44px; }
+      .score-num { font-size: 36px; }
+      .scores { gap: 8px; }
+      .score-box { padding: 1.25rem 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="eyebrow">Brand Positioning Audit</div>
+    <h1 class="hero-title">Find your<br><em>positioning gap.</em></h1>
+    <p class="hero-sub">Answer 11 questions. Our system reads your actual website and tells you exactly where your brand is losing ground — and how to close it.</p>
+    <button class="hero-cta" onclick="startAudit()">
+      Start your free audit
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <p class="hero-note">Takes 5 minutes · Instant results</p>
+  </section>
+
+  <!-- FORM -->
+  <div class="form-area" id="form-area">
+
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:14%"></div>
+      </div>
+      <div class="progress-label" id="progress-label">1 of 7</div>
+    </div>
+
+    <!-- STEP 0 -->
+    <div id="step-0" class="step active">
+      <div class="card-dark">
+        <div class="intro-headline">Show us what you've got.</div>
+        <div class="intro-body">We'll read your actual website live — so your report won't be generic. Leave anything blank that doesn't apply.</div>
+      </div>
+      <div class="card">
+        <div class="q-text" style="margin-bottom:1.25rem;">Your digital presence</div>
+        <div class="url-field">
+          <div class="url-label">Website <span class="badge">optional</span></div>
+          <input type="url" id="url-website" placeholder="https://yourwebsite.com">
+        </div>
+        <div class="url-field">
+          <div class="url-label">LinkedIn <span class="badge">optional</span></div>
+          <input type="url" id="url-linkedin" placeholder="https://linkedin.com/in/yourname">
+        </div>
+        <div class="url-field">
+          <div class="url-label">Instagram <span class="badge">optional</span></div>
+          <input type="text" id="url-instagram" placeholder="@yourhandle">
+        </div>
+        <div class="url-field">
+          <div class="url-label">Facebook <span class="badge">optional</span></div>
+          <input type="url" id="url-facebook" placeholder="https://facebook.com/yourpage">
+        </div>
+        <div class="url-field">
+          <div class="url-label">YouTube <span class="badge">optional</span></div>
+          <input type="url" id="url-youtube" placeholder="https://youtube.com/@yourchannel">
+        </div>
+        <div class="url-field">
+          <div class="url-label">Other <span class="badge">optional</span></div>
+          <input type="text" id="url-other" placeholder="TikTok, podcast, Substack...">
+        </div>
+      </div>
+      <div class="nav">
+        <span></span>
+        <button class="btn-next" onclick="goTo(1)">
+          Continue
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="step-1" class="step">
+      <div class="card">
+        <div class="q-num">Question 1</div>
+        <div class="q-text">What do you do and who do you do it for?</div>
+        <div class="q-hint">Ex: "I help corporate executives transition into entrepreneurship"</div>
+        <textarea id="q1" placeholder="Describe your work and your ideal client..."></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 1b</div>
+        <div class="q-text">How long have you been in business?</div>
+        <div class="options" style="margin-top:1rem;">
+          <label class="option"><input type="radio" name="q1b" value="Less than 1 year"><span class="option-dot"></span>Less than 1 year</label>
+          <label class="option"><input type="radio" name="q1b" value="1–3 years"><span class="option-dot"></span>1–3 years</label>
+          <label class="option"><input type="radio" name="q1b" value="3–5 years"><span class="option-dot"></span>3–5 years</label>
+          <label class="option"><input type="radio" name="q1b" value="5–10 years"><span class="option-dot"></span>5–10 years</label>
+          <label class="option"><input type="radio" name="q1b" value="10+ years"><span class="option-dot"></span>10+ years</label>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(0)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back
+        </button>
+        <button class="btn-next" onclick="goTo(2)">Continue <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step-2" class="step">
+      <div class="card">
+        <div class="q-num">Question 2</div>
+        <div class="q-text">How would your best client describe you in one sentence?</div>
+        <textarea id="q2" placeholder="What would they say about you..." style="margin-top:1rem;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 3</div>
+        <div class="q-text">When someone Googles you or visits your website, what do they see?</div>
+        <div class="options" style="margin-top:1rem;">
+          <label class="option"><input type="radio" name="q3" value="Nothing — I'm basically invisible online"><span class="option-dot"></span>Nothing — I'm basically invisible online</label>
+          <label class="option"><input type="radio" name="q3" value="Something generic that looks like everyone else"><span class="option-dot"></span>Something generic that looks like everyone else</label>
+          <label class="option"><input type="radio" name="q3" value="Something that represents me but needs work"><span class="option-dot"></span>Something that represents me but needs work</label>
+          <label class="option"><input type="radio" name="q3" value="A strong, clear, premium presence"><span class="option-dot"></span>A strong, clear, premium presence</label>
+          <label class="option"><input type="radio" name="q3" value="other-q3"><span class="option-dot"></span>Other:</label>
+        </div>
+        <div class="other-field" id="q3-other-wrap">
+          <input type="text" id="q3-other" placeholder="Describe what they see...">
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(1)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Back</button>
+        <button class="btn-next" onclick="goTo(3)">Continue <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step-3" class="step">
+      <div class="card">
+        <div class="q-num">Question 4</div>
+        <div class="q-text">What's your current price point for your main offer?</div>
+        <div class="q-hint">A range is fine</div>
+        <textarea id="q4" placeholder="Ex: $500–$2,000 per project, $5,000/month retainer..." style="min-height:70px;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 5</div>
+        <div class="q-text">What do you think is stopping people from buying?</div>
+        <div class="options" style="margin-top:1rem;">
+          <label class="option"><input type="radio" name="q5" value="They don't find me"><span class="option-dot"></span>They don't find me</label>
+          <label class="option"><input type="radio" name="q5" value="They find me but don't understand what I do"><span class="option-dot"></span>They find me but don't understand what I do</label>
+          <label class="option"><input type="radio" name="q5" value="They understand but don't see the value"><span class="option-dot"></span>They understand but don't see the value</label>
+          <label class="option"><input type="radio" name="q5" value="They see the value but think it's too expensive"><span class="option-dot"></span>They see the value but think it's too expensive</label>
+          <label class="option"><input type="radio" name="q5" value="other-q5"><span class="option-dot"></span>Other:</label>
+        </div>
+        <div class="other-field" id="q5-other-wrap">
+          <input type="text" id="q5-other" placeholder="What's stopping them...">
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(2)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Back</button>
+        <button class="btn-next" onclick="goTo(4)">Continue <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="step-4" class="step">
+      <div class="card">
+        <div class="q-num">Question 6</div>
+        <div class="q-text">Who are your 2–3 biggest competitors? What makes you different?</div>
+        <textarea id="q6" placeholder="Name them and explain your key differentiators..." style="margin-top:1rem;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 7</div>
+        <div class="q-text">What result do you create for clients that nobody else does?</div>
+        <textarea id="q7" placeholder="Your unique outcome or transformation..." style="margin-top:1rem;"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(3)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Back</button>
+        <button class="btn-next" onclick="goTo(5)">Continue <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div id="step-5" class="step">
+      <div class="card">
+        <div class="q-num">Question 8</div>
+        <div class="q-text">How do most of your clients find you today?</div>
+        <div class="multi-hint" style="margin-top:0.75rem;">Select all that apply</div>
+        <div class="options">
+          <label class="option"><input type="checkbox" name="q8" value="Referrals"><span class="option-check"></span>Referrals</label>
+          <label class="option"><input type="checkbox" name="q8" value="Instagram"><span class="option-check"></span>Instagram</label>
+          <label class="option"><input type="checkbox" name="q8" value="LinkedIn"><span class="option-check"></span>LinkedIn</label>
+          <label class="option"><input type="checkbox" name="q8" value="Facebook"><span class="option-check"></span>Facebook</label>
+          <label class="option"><input type="checkbox" name="q8" value="Speaking/events"><span class="option-check"></span>Speaking / events</label>
+          <label class="option"><input type="checkbox" name="q8" value="Cold outreach"><span class="option-check"></span>Cold outreach</label>
+          <label class="option"><input type="checkbox" name="q8" value="Google/SEO"><span class="option-check"></span>Google / SEO</label>
+          <label class="option"><input type="checkbox" name="q8" value="I'm still figuring this out"><span class="option-check"></span>I'm still figuring this out</label>
+        </div>
+        <div style="margin-top:10px;">
+          <input type="text" id="q8-other" placeholder="Anything else? Add it here...">
+        </div>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 9</div>
+        <div class="q-text">If your brand walked into a room, how would people describe them?</div>
+        <div class="q-hint">Ex: "confident but approachable", "the smartest person there but you'd never know it"</div>
+        <textarea id="q9" placeholder="Describe the personality and presence of your brand..." style="min-height:70px;"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(4)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Back</button>
+        <button class="btn-next" onclick="goTo(6)">Continue <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div id="step-6" class="step">
+      <div class="card">
+        <div class="q-num">Question 10</div>
+        <div class="q-text">What's the one thing you wish people understood about you that they currently don't?</div>
+        <textarea id="q10" placeholder="The thing that if people knew, they'd buy immediately..." style="margin-top:1rem;"></textarea>
+      </div>
+      <div class="card">
+        <div class="q-num">Question 11</div>
+        <div class="q-text">Where are you based?</div>
+        <select id="q11" style="margin-top:1rem;">
+          <option value="">Select your location...</option>
+          <option value="United States — Northeast">United States — Northeast</option>
+          <option value="United States — Southeast">United States — Southeast</option>
+          <option value="United States — Midwest">United States — Midwest</option>
+          <option value="United States — West Coast">United States — West Coast</option>
+          <option value="United States — Other">United States — Other</option>
+          <option value="Canada">Canada</option>
+          <option value="Latin America">Latin America</option>
+          <option value="Europe">Europe</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="error-box" id="error-msg"></div>
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(5)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Back</button>
+        <button class="btn-next" id="generate-btn" onclick="generateReport()">
+          Generate my report
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="step-loading" class="step">
+      <div class="loading-screen">
+        <div class="loader"></div>
+        <div class="loading-title" id="loading-text">Analyzing your positioning...</div>
+        <div class="loading-sub">Reading your website · Building your report · Takes ~15 seconds</div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div id="step-report" class="step">
+      <div class="report-wrap" id="report-content"></div>
+      <div class="restart-wrap">
+        <button class="btn-restart" onclick="restart()">Start over</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const totalSteps = 7;
+
+    function startAudit() {
+      document.getElementById('hero').style.display = 'none';
+      document.getElementById('form-area').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress(step) {
+      const pct = Math.round(((step + 1) / totalSteps) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = `${step + 1} of ${totalSteps}`;
+    }
+
+    function goTo(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + n).classList.add('active');
+      currentStep = n;
+      updateProgress(n);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', function () {
+        const name = this.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(o => {
+          o.closest('.option').classList.remove('selected');
+        });
+        this.closest('.option').classList.add('selected');
+        const wrapId = name + '-other-wrap';
+        const wrap = document.getElementById(wrapId);
+        if (wrap) wrap.style.display = this.value.startsWith('other-') ? 'block' : 'none';
+      });
+    });
+
+    document.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', function () {
+        this.closest('.option').classList.toggle('selected', this.checked);
+      });
+    });
+
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    function getRadio(name) {
+      const sel = document.querySelector(`input[name="${name}"]:checked`);
+      if (!sel) return '';
+      if (sel.value.startsWith('other-')) {
+        const other = document.getElementById(name + '-other');
+        return other ? other.value.trim() : '';
+      }
+      return sel.value;
+    }
+
+    function getCheckboxes(name) {
+      const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
+      const other = getVal(name + '-other');
+      if (other) checked.push(other);
+      return checked.length > 0 ? checked.join(', ') : 'Not specified';
+    }
+
+    function collectAnswers() {
+      return {
+        website: getVal('url-website'),
+        linkedin: getVal('url-linkedin'),
+        instagram: getVal('url-instagram'),
+        facebook: getVal('url-facebook'),
+        youtube: getVal('url-youtube'),
+        otherPlatform: getVal('url-other'),
+        whatYouDo: getVal('q1'),
+        yearsInBusiness: getRadio('q1b'),
+        bestClientDescription: getVal('q2'),
+        onlinePresence: getRadio('q3'),
+        pricePoint: getVal('q4'),
+        buyingBarrier: getRadio('q5'),
+        competitors: getVal('q6'),
+        uniqueResult: getVal('q7'),
+        clientSource: getCheckboxes('q8'),
+        brandPersonality: getVal('q9'),
+        wishPeopleKnew: getVal('q10'),
+        location: getVal('q11')
+      };
+    }
+
+    async function generateReport() {
+      const answers = collectAnswers();
+      const btn = document.getElementById('generate-btn');
+      const err = document.getElementById('error-msg');
+      err.style.display = 'none';
+      btn.disabled = true;
+
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-loading').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const msgs = [
+        'Analyzing your positioning...',
+        'Reading your website...',
+        'Identifying your gaps...',
+        'Building your report...'
+      ];
+      let mi = 0;
+      const lt = document.getElementById('loading-text');
+      const interval = setInterval(() => { mi = (mi + 1) % msgs.length; lt.textContent = msgs[mi]; }, 3000);
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(answers)
+        });
+
+        clearInterval(interval);
+        if (!res.ok) throw new Error('Server error');
+        const report = await res.json();
+        renderReport(report, answers);
+      } catch (e) {
+        clearInterval(interval);
+        btn.disabled = false;
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-6').classList.add('active');
+        err.textContent = 'Something went wrong generating your report. Please try again.';
+        err.style.display = 'block';
+      }
+    }
+
+    function renderReport(r, a) {
+      const platforms = [a.website, a.linkedin, a.instagram, a.facebook, a.youtube, a.otherPlatform].filter(Boolean);
+      const platformsHtml = platforms.length > 0
+        ? `<div class="platforms-row">${platforms.map(p => `<span class="platform-tag">${p}</span>`).join('')}</div>` : '';
+
+      const now = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      document.getElementById('report-content').innerHTML = `
+        <div class="report-header">
+          <div class="report-eyebrow">Your report is ready</div>
+          <div class="report-title">Brand Positioning Report</div>
+          <div class="report-date">${now}</div>
+        </div>
+        ${platformsHtml}
+        <div class="scores">
+          <div class="score-box">
+            <div class="score-num">${r.positioningScore}</div>
+            <div class="score-label">Positioning</div>
+          </div>
+          <div class="score-box">
+            <div class="score-num">${r.visibilityScore}</div>
+            <div class="score-label">Visibility</div>
+          </div>
+          <div class="score-box">
+            <div class="score-num">${r.authorityScore}</div>
+            <div class="score-label">Authority</div>
+          </div>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Where you are now</div>
+          <div class="r-body">${r.currentStateAnalysis}</div>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Core positioning gap</div>
+          <div class="r-body">${r.corePositioningGap}</div>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Top 3 gaps to close</div>
+          <ul class="gap-list">
+            ${r.topGaps.map((g, i) => `<li class="gap-item"><span class="gap-n">${i + 1}</span><span class="gap-text">${g}</span></li>`).join('')}
+          </ul>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Your positioning opportunity</div>
+          <div class="r-body">${r.uniquePositioningOpportunity}</div>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Positioning statement (draft)</div>
+          <div class="positioning-stmt">${r.positioningStatement}</div>
+        </div>
+        <div class="r-section">
+          <div class="r-label">Do these 3 things first</div>
+          <ul class="action-list">
+            ${r.immediateActions.map(ac => `<li class="action-item">${ac}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="r-section">
+          <div class="final-msg">${r.finalMessage}</div>
+        </div>
+      `;
+
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-report').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function restart() {
+      document.querySelectorAll('textarea').forEach(t => t.value = '');
+      document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(i => {
+        i.checked = false;
+        i.closest('.option').classList.remove('selected');
+      });
+      document.querySelectorAll('input[type=text], input[type=url]').forEach(i => i.value = '');
+      document.querySelectorAll('.other-field').forEach(w => w.style.display = 'none');
+      document.getElementById('q11').value = '';
+      document.getElementById('generate-btn').disabled = false;
+      document.getElementById('hero').style.display = 'flex';
+      document.getElementById('form-area').classList.remove('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    updateProgress(0);
+  </script>
+</body>
+</html>
